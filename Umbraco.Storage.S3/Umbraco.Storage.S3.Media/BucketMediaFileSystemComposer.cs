@@ -25,12 +25,19 @@ namespace Umbraco.Storage.S3.Media
                 composition.RegisterUnique(config);
                 composition.Register<IMimeTypeResolver>(new DefaultMimeTypeResolver());
 
+                var s3config = new AmazonS3Config()
+                {
+                    RegionEndpoint = Amazon.RegionEndpoint.GetBySystemName(config.Region),
+                    ForcePathStyle = config.ForcePathStyle,
+                    ServiceURL = config.ServiceUrl
+                };
+
                 composition.SetMediaFileSystem((f) => new BucketFileSystem(
                     config: config,
                     mimeTypeResolver: f.GetInstance<IMimeTypeResolver>(),
                     fileCacheProvider: null,
                     logger: f.GetInstance<ILogger>(),
-                    s3Client: new AmazonS3Client(Amazon.RegionEndpoint.GetBySystemName(config.Region))
+                    s3Client: new AmazonS3Client(s3config)
                 ));
 
                 composition.Components().Append<BucketMediaFileSystemComponent>();
@@ -43,6 +50,8 @@ namespace Umbraco.Storage.S3.Media
         {
             var bucketName = ConfigurationManager.AppSettings[$"{AppSettingsKey}:BucketName"];
             var bucketHostName = ConfigurationManager.AppSettings[$"{AppSettingsKey}:BucketHostname"];
+            var serviceUrl = ConfigurationManager.AppSettings[$"{AppSettingsKey}:ServiceUrl"];
+            bool.TryParse(ConfigurationManager.AppSettings[$"{AppSettingsKey}:ForcePathStyle"], out var forcepathstyle);
             var bucketPrefix = ConfigurationManager.AppSettings[$"{AppSettingsKey}:MediaPrefix"];
             var region = ConfigurationManager.AppSettings[$"{AppSettingsKey}:Region"];
             bool.TryParse(ConfigurationManager.AppSettings[$"{AppSettingsKey}:DisableVirtualPathProvider"], out var disableVirtualPathProvider);
@@ -63,6 +72,8 @@ namespace Umbraco.Storage.S3.Media
             {
                 BucketName = bucketName,
                 BucketHostName = bucketHostName,
+                ServiceUrl = serviceUrl,
+                ForcePathStyle = forcepathstyle,
                 BucketPrefix = bucketPrefix.Trim(Delimiters),
                 Region = region,
                 CannedACL = new S3CannedACL("public-read"),

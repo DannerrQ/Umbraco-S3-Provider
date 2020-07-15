@@ -119,6 +119,19 @@ Replace config file located `~/config/imageprocessor/security.config`
 </security>
 ```
 
+## Using Minio
+
+It is possible to use the provider with a (self-hosted) Minio (https://min.io). Minio requires that ForcePathStyle config settings is true and there needs to be specified a custom URL for the Minio/S3 instance.
+
+Add the following extra settings for Minio to work
+
+```xml
+    <add key="BucketFileSystem:ServiceUrl" value="http://localhost:9000" />
+    <add key="BucketFileSystem:ForcePathStyle" value="true" />
+```
+
+Note: Minio uses `us-east-1` as the default region.
+
 ## Future work on this project
 Due to not having access to the original Umbraco.Storage.S3 package name I've released the NuGet package under `Our.Umbraco.FileSystemProviders.S3...`. Add in the Web.config keys and we have 3 different naming conventions. I intend to resolve this at some point in the future. If the Web.config keys are changed then I will ensure the new names are optional and the old keys will continue to work.
 

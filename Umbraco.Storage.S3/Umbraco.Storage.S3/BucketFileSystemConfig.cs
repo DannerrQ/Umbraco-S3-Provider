@@ -7,6 +7,8 @@ namespace Umbraco.Storage.S3
         public string BucketName { get; set; }
 
         public string BucketHostName { get; set; }
+        public string ServiceUrl { get; set; }
+        public bool ForcePathStyle { get; set; }
 
         public string BucketPrefix { get; set; }
 
