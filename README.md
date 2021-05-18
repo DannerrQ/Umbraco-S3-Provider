@@ -26,6 +26,7 @@ Add the following keys to `~/Web.config`
     <add key="BucketFileSystem:Region" value="" />
     <add key="BucketFileSystem:BucketName" value="" />
     <add key="BucketFileSystem:MediaPrefix" value="media" />
+	<add key="BucketFileSystem:FileACL" value="public-read" />
     <add key="BucketFileSystem:FormsPrefix" value="forms" />
     <add key="BucketFileSystem:BucketHostname" value="" />
     <add key="BucketFileSystem:DisableVirtualPathProvider" value="false" />
@@ -39,6 +40,7 @@ Add the following keys to `~/Web.config`
 | `MediaPrefix` | Sometimes | N/A | The prefix for any media files being added to S3. Essentially a root directory name. Required when using `Umbraco.Storage.S3.Media` |
 | `FormsPrefix` | Sometimes | N/A | The prefix for any Umbraco Forms data files being added to S3. Essentially a root directory name. Required when using `Umbraco.Storage.S3.Forms` |
 | `BucketName` | Yes | N/A | The name of your S3 bucket. |
+| `FileACL` | Yes | N/A | The ACL to apply to S3 items. |
 | `BucketHostname` | Sometimes | N/A | The hostname for your bucket (e.g. `test-s3-bucket.s3.eu-west-2.amazonaws.com`). Required when `DisableVirtualPathProvider` is set to `true` |
 | `DisableVirtualPathProvider` | No | `false` | Setting this to `true` will disable the VPP functionality. See below for more info. |
 

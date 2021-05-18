@@ -4,6 +4,7 @@ using Umbraco.Core;
 using Umbraco.Core.Composing;
 using Umbraco.Core.Exceptions;
 using Umbraco.Core.Logging;
+using Umbraco.Storage.S3.Extensions;
 using Umbraco.Storage.S3.Services;
 
 namespace Umbraco.Storage.S3.Media
@@ -45,6 +46,7 @@ namespace Umbraco.Storage.S3.Media
             var bucketHostName = ConfigurationManager.AppSettings[$"{AppSettingsKey}:BucketHostname"];
             var bucketPrefix = ConfigurationManager.AppSettings[$"{AppSettingsKey}:MediaPrefix"];
             var region = ConfigurationManager.AppSettings[$"{AppSettingsKey}:Region"];
+            var fileACL = ConfigurationManager.AppSettings[$"{AppSettingsKey}:FileACL"];
             bool.TryParse(ConfigurationManager.AppSettings[$"{AppSettingsKey}:DisableVirtualPathProvider"], out var disableVirtualPathProvider);
 
             if (string.IsNullOrEmpty(bucketName))
@@ -59,13 +61,16 @@ namespace Umbraco.Storage.S3.Media
             if (disableVirtualPathProvider && string.IsNullOrEmpty(bucketHostName))
                 throw new ArgumentNullOrEmptyException("BucketHostname", $"The AWS S3 Bucket File System (Media) is missing the value '{AppSettingsKey}:BucketHostname' from AppSettings");
 
+            if (string.IsNullOrEmpty(fileACL))
+                throw new ArgumentNullOrEmptyException("FileACL", $"The AWS S3 Bucket File System (Forms) is missing the value '{AppSettingsKey}:FileACL' from AppSettings");
+
             return new BucketFileSystemConfig
             {
                 BucketName = bucketName,
                 BucketHostName = bucketHostName,
                 BucketPrefix = bucketPrefix.Trim(Delimiters),
                 Region = region,
-                CannedACL = new S3CannedACL("public-read"),
+                CannedACL = AclExtensions.ParseCannedAcl(fileACL),
                 ServerSideEncryptionMethod = "",
                 DisableVirtualPathProvider = disableVirtualPathProvider
             };
